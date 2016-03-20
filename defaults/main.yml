@@ -1,0 +1,22 @@
+---
+
+vortessence_user: "{{ ansible_user | default(lookup('env', 'USER'), True) }}"
+#vortessence_user: "{{ ansible_user | default('vagrant') }}"
+
+vortessence_rootdir: /opt/vortessence
+vortessence_casesdir: /cases
+vortessence_mysqldb: vortessence
+#vortessence_mysqluser: vortessenceuser
+#vortessence_mysqlpass: vortessencepass
+vortessence_mysqluser: vortessence
+vortessence_mysqlpass: vortessence
+
+vortessence_server_host: 0.0.0.0
+vortessence_server_port: 8000
+
+## for a volatility/vortessence usage, you want it maxmemfilesize+300MB
+## define size to enable
+ramdisk_path: /media/tmpfs
+ramdisk_size: 1024m
+#ramdisk_size: 2048m
+

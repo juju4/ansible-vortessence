@@ -1,0 +1,78 @@
+---
+
+- debug: var=vortessence_user
+- name: Ensure vortessence root directory exists
+  file: dest="{{ vortessence_rootdir }}" state=directory mode=0755 owner={{ vortessence_user }}
+- name: Vortessence - Automated memory forensics analysis 
+  git:
+    repo=https://github.com/vortessence/vortessence.git
+    dest={{ vortessence_rootdir }}
+    force=no
+  ignore_errors: true
+  become: yes 
+  become_user: "{{ vortessence_user }}"
+
+- name: Install Vortessence requirements
+  pip: name={{item}} state=present
+  with_items:
+    - django
+    - tabulate
+    - django-extra-views
+    - pycrypto
+    - django-pure-pagination
+    - distorm3
+  become: yes 
+
+- name: create vortessence mysql db
+  mysql_db: name="{{ vortessence_mysqldb }}" state=present
+
+#- name: import insert_db_profiles.sql into vortessence mysql db
+#  mysql_db: name="{{ vortessence_mysqldb }}" state=import target="{{ vortessence_rootdir }}/vagrant/insert_db_profiles.sql"
+#  ignore_errors: true
+
+- name: create vortessence mysql user
+  mysql_user: "name={{ vortessence_mysqluser }} password={{ vortessence_mysqlpass }} priv=*.*:USAGE/{{ vortessence_mysqldb }}.*:ALL state=present"
+## Database settings should be reflected in ~/Toolset/vortessence/vortessence/vortessence/settings.py
+
+- name: Review vortessence directories config
+  replace: dest="{{ vortessence_rootdir }}/vortessence/vortessence/settings.py" regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  with_items:
+    - { regexp: "'NAME': 'vortessence',", replace: "'NAME': '{{ vortessence_mysqldb }}'," }
+    - { regexp: "'USER': 'vortessence',", replace: "'USER': '{{ vortessence_mysqluser }}'," }
+    - { regexp: "'PASSWORD': 'vortessence',", replace: "'PASSWORD': '{{ vortessence_mysqlpass }}'," }
+    - { regexp: '/vagrant/data/upload', replace: "{{ vortessence_casesdir }}/vortessence_upload" }
+    - { regexp: '/vagrant/data/target', replace: "{{ vortessence_casesdir }}/vortessence_target" }
+#    - { regexp: '/media/tmpfs', replace: '/path/to/ramdisk' }
+    - { regexp: "^    'django.contrib.staticfiles',", replace: "#    'django.contrib.staticfiles'," }
+  notify:
+    - restart supervisor
+- name: Ensure directories exist
+  file: dest="{{ item }}" state=directory mode=0755 owner={{ vortessence_user }}
+  with_items:
+    - "{{ vortessence_casesdir }}/vortessence_upload"
+    - "{{ vortessence_casesdir }}/vortessence_target"
+
+## Vortessence Frontend:\nhttp://localhost:8000/\n\nphpMyAdmin (credentials: root/toor):\nhttp://localhost:8080/phpmyadmin/
+- stat: path=/root/.vortessence-setup
+  register: vs
+- name: Vortessence - setup
+  command: "{{ item }} chdir={{ vortessence_rootdir }}/vortessence"
+  with_items:
+    - python manage.py makemigrations
+    - python manage.py migrate
+    - python manage.py makemigrations vortessence
+    - python manage.py migrate vortessence
+    - python manage.py loaddata profile_fixture.json
+## interactive (password)
+#    - python manage.py createsuperuser --username admin --email root@localhost
+  become: yes 
+  become_user: "{{ vortessence_user }}"
+  when: not vs.stat.exists
+- name: add marker setup done
+  file: dest=/root/.vortessence-setup state=touch
+  when: not vs.stat.exists
+
+- name: ensure ramdisk has the right permissions
+  file: dest="{{ ramdisk_path }}" mode=1777 state=directory
+- name: add example preprocessing script in cases dir
+  copy: src=vortessence-preprocess.sh dest="{{ vortessence_casesdir }}" mode=0755
