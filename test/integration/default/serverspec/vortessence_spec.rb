@@ -13,6 +13,6 @@ end
 
 describe command('wget -O - http://localhost:8000') do
 ## FIXME! failing. got "Congratulations on your first Django-powered page."
-#  its(:stdout) { should match /vortessence/ }
+  its(:stdout) { should match /vortessence/ }
 end
 

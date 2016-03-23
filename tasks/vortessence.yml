@@ -52,26 +52,6 @@
     - "{{ vortessence_casesdir }}/vortessence_upload"
     - "{{ vortessence_casesdir }}/vortessence_target"
 
-## FIXME! travis not finding django???
-- shell: "pip freeze | grep -i django"
-  register: d1
-- debug: var=d1.stdout_lines
-- command: "python -c \"from distutils.sysconfig import get_python_lib; print get_python_lib()\""
-  register: d2
-- debug: var=d2.stdout_lines
-- shell: "python -c \"import django; print(django.get_version())\""
-  register: d3
-- debug: var=d3.stdout_lines
-- shell: "env"
-  register: d4
-- debug: var=d4.stdout_lines
-- shell: "which python"
-  register: d5
-- debug: var=d5.stdout_lines
-- shell: "python --version"
-  register: d6
-- debug: var=d6.stdout_lines
-
 ## Vortessence Frontend:\nhttp://localhost:8000/\n\nphpMyAdmin (credentials: root/toor):\nhttp://localhost:8080/phpmyadmin/
 - stat: path=/root/.vortessence-setup
   register: vs
@@ -98,3 +78,9 @@
   file: dest="{{ ramdisk_path }}" mode=1777 state=directory
 - name: add example preprocessing script in cases dir
   copy: src=vortessence-preprocess.sh dest="{{ vortessence_casesdir }}" mode=0755
+
+- command: "wget -O - http://localhost:8000"
+  changed_when: false
+  register: wui
+- debug: var=wui.stdout_lines
+
