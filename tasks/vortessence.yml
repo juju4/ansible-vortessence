@@ -88,7 +88,7 @@
   become: yes 
   become_user: "{{ vortessence_user }}"
   environment:
-    PYTHONPATH: '/usr/local/lib/python2.7/site-packages'
+    PYTHONPATH: '/usr/local/lib/python2.7/dist-packages'
   when: not vs.stat.exists
 - name: add marker setup done
   file: dest=/root/.vortessence-setup state=touch
