@@ -53,7 +53,7 @@
     - "{{ vortessence_casesdir }}/vortessence_target"
 
 ## FIXME! travis not finding django???
-- shell: "pip freeze | grep -i django"
+- shell: "pip freeze | grep -i django; python -c \"import django; print(django.get_version())\""
   register: d1
 - debug: var=d1.stdout_lines
 - command: "python -c \"from distutils.sysconfig import get_python_lib; print get_python_lib()\""
@@ -75,6 +75,8 @@
 #    - python manage.py createsuperuser --username admin --email root@localhost
   become: yes 
   become_user: "{{ vortessence_user }}"
+  environment:
+    PYTHONPATH: '/usr/local/lib/python2.7/site-packages'
   when: not vs.stat.exists
 - name: add marker setup done
   file: dest=/root/.vortessence-setup state=touch

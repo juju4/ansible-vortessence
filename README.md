@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/juju4/ansible-vortessence.svg?branch=master)](https://travis-ci.org/juju4/ansible-vortessence)
 # Vortessence ansible role
 
 A simple ansible role to setup Vortessence
@@ -83,5 +84,4 @@ django.core.exceptions.ImproperlyConfigured: You're using the staticfiles app wi
 ## License
 
 BSD 2-clause
-
 
