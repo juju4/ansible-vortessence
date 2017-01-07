@@ -1,9 +1,5 @@
 ---
 
 - name: restart supervisor
-  service: name={{ supervisor_service }} state=restarted
-## in kitchen, fails for unknown reason...
-  ignore_errors: true
-#  async: 30
-#  poll: 10
+  service: name={{ supervisor_service }} state=restarted sleep=5
 

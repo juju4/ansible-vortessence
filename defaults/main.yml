@@ -1,7 +1,10 @@
 ---
 
-vortessence_user: "{{ ansible_user | default(lookup('env', 'USER'), True) }}"
-#vortessence_user: "{{ ansible_user | default('vagrant') }}"
+vortessence_user: _vortessence
+vortessence_homedir: /var/_vortessence
+#vortessence_user: vagrant
+#vortessence_user: "{{ ansible_user | default(lookup('env', 'USER'), True) }}"
+#vortessence_user: "{{ ansible_ssh_user | default('vagrant') }}"
 
 vortessence_rootdir: /opt/vortessence
 vortessence_casesdir: /cases

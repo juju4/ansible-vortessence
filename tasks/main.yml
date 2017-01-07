@@ -9,9 +9,3 @@
 - include: ramdisk.yml
 - include: vortessence.yml
 
-- name: set supervisor config to manage vortessence runserver
-  template: src=supervisor-vortessence-server.ini dest={{ supervisor_confdir }}/vortessence-runserver.{{ supervisor_ext }} mode=0644
-  notify:
-    - restart supervisor
-
-

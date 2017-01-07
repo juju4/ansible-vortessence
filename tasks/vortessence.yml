@@ -1,16 +1,22 @@
 ---
 
 - debug: var=vortessence_user
-- name: Ensure vortessence root directory exists
-  file: dest="{{ vortessence_rootdir }}" state=directory mode=0755 owner={{ vortessence_user }}
-- name: Vortessence - Automated memory forensics analysis 
+
+- name: check role user exists
+  user: "name={{ vortessence_user }} home={{ vortessence_homedir }}"
+  become: yes
+#  ignore_errors: true
+
+#- name: Ensure vortessence root directory exists
+#  file: dest="{{ vortessence_rootdir }}" state=directory mode=0755 owner={{ vortessence_user }}
+- name: git clone Vortessence - Automated memory forensics analysis
   git:
     repo=https://github.com/vortessence/vortessence.git
     dest={{ vortessence_rootdir }}
     force=no
   ignore_errors: true
-  become: yes 
-  become_user: "{{ vortessence_user }}"
+#  become: yes
+#  become_user: "{{ vortessence_user }}"
 
 - name: Install Vortessence requirements
   pip: name={{item}} state=present
@@ -21,7 +27,7 @@
     - pycrypto
     - django-pure-pagination
     - distorm3
-  become: yes 
+  become: yes
 
 - name: create vortessence mysql db
   mysql_db: name="{{ vortessence_mysqldb }}" state=present
@@ -34,6 +40,10 @@
   mysql_user: "name={{ vortessence_mysqluser }} password={{ vortessence_mysqlpass }} priv=*.*:USAGE/{{ vortessence_mysqldb }}.*:ALL state=present"
 ## Database settings should be reflected in ~/Toolset/vortessence/vortessence/vortessence/settings.py
 
+- stat: path="{{ vortessence_rootdir }}/vortessence/vortessence/settings.py"
+  register: conf
+- debug: var=conf
+## FIXME! WORK ok as vagrant user, fails as _vortessence/doesn't find file...
 - name: Review vortessence directories config
   replace: dest="{{ vortessence_rootdir }}/vortessence/vortessence/settings.py" regexp="{{ item.regexp }}" replace="{{ item.replace }}"
   with_items:
@@ -52,7 +62,17 @@
     - "{{ vortessence_casesdir }}/vortessence_upload"
     - "{{ vortessence_casesdir }}/vortessence_target"
 
+- stat: path=/root/.vortessence-chown
+  register: vc
+- name: ensure permissions for vortessence tree
+  command: "chown -R {{ vortessence_user }} {{ vortessence_rootdir }}"
+  when: not vc.stat.exists
+- name: add marker setup done
+  file: dest=/root/.vortessence-chown state=touch
+  when: not vc.stat.exists
+
 ## Vortessence Frontend:\nhttp://localhost:8000/\n\nphpMyAdmin (credentials: root/toor):\nhttp://localhost:8080/phpmyadmin/
+## FIXME! WORK ok as root, nok as vagrant
 - stat: path=/root/.vortessence-setup
   register: vs
 - name: Vortessence - setup
@@ -65,7 +85,7 @@
     - python manage.py loaddata profile_fixture.json
 ## interactive (password)
 #    - python manage.py createsuperuser --username admin --email root@localhost
-  become: yes 
+  become: yes
   become_user: "{{ vortessence_user }}"
   environment:
     PYTHONPATH: '/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages'
@@ -79,8 +99,14 @@
 - name: add example preprocessing script in cases dir
   copy: src=vortessence-preprocess.sh dest="{{ vortessence_casesdir }}" mode=0755
 
+- name: set supervisor config to manage vortessence runserver
+  template: src=supervisor-vortessence-server.ini dest={{ supervisor_confdir }}/vortessence-runserver.{{ supervisor_ext }} mode=0644
+  notify:
+    - restart supervisor
+
 - command: "wget -O - http://localhost:8000"
   changed_when: false
   register: wui
+  ignore_errors: true
 - debug: var=wui.stdout_lines
 
