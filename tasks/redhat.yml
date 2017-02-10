@@ -11,13 +11,3 @@
     - supervisor
     - gcc
 
-- name: Redhat | Ensure Mysql/Mariadb is running and enabled on boot.
-  service: name=mariadb state=started enabled=yes
-- name: Redhat | Ensure Supervisord is running and enabled on boot.
-  service: name=mariadb state=started enabled=yes
-
-- set_fact:
-    supervisor_confdir: /etc/supervisord.d
-    supervisor_ext: ini
-    supervisor_service: supervisord
-

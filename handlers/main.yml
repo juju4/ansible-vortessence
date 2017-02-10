@@ -1,5 +1,5 @@
 ---
 
 - name: restart supervisor
-  service: name={{ supervisor_service }} state=restarted sleep=5
+  service: name={{ supervisor_svc }} state=restarted sleep=5
 

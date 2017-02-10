@@ -9,7 +9,3 @@
     - python-pip
     - supervisor
 
-- set_fact:
-    supervisor_confdir: /etc/supervisor/conf.d
-    supervisor_ext: conf
-    supervisor_service: supervisor

@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/juju4/ansible-vortessence.svg?branch=master)](https://travis-ci.org/juju4/ansible-vortessence)
+[![Build Status - Master](https://travis-ci.org/juju4/ansible-vortessence.svg?branch=master)](https://travis-ci.org/juju4/ansible-vortessence)
+[![Build Status - Devel](https://travis-ci.org/juju4/ansible-vortessence.svg?branch=devel)](https://travis-ci.org/juju4/ansible-vortessence/branches)
 # Vortessence ansible role
 
 A simple ansible role to setup Vortessence
@@ -10,6 +11,7 @@ http://vortessence.org/
 ### Ansible
 It was tested on the following versions:
  * 2.0
+ * 2.2
 
 ### Operating systems
 
@@ -23,7 +25,7 @@ For example
 ```
 - host: all
   roles:
-    - vortessence
+    - juju4.vortessence
 ```
 
 ## Variables
@@ -36,13 +38,13 @@ This role has a travis basic test (for github), more advanced with kitchen and a
 
 Once you ensured all necessary roles are present, You can test with:
 ```
-$ cd /path/to/roles/vortessence
+$ cd /path/to/roles/juju4.vortessence
 $ kitchen verify
 $ kitchen login
 ```
 or
 ```
-$ cd /path/to/roles/vortessence/test/vagrant
+$ cd /path/to/roles/juju4.vortessence/test/vagrant
 $ vagrant up
 $ vagrant ssh
 ```

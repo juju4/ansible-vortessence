@@ -1,0 +1,9 @@
+---
+
+mysql_svc: mysql
+mysql_confdir: /etc/mysql
+
+supervisor_svc: supervisor
+supervisor_confdir: /etc/supervisor/conf.d
+supervisor_ext: conf
+
