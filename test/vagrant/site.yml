@@ -2,5 +2,5 @@
 
 - hosts: all
   roles:
-    - vortessence
+    - juju4.vortessence
 
