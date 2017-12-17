@@ -18,10 +18,15 @@
 #  become: yes
 #  become_user: "{{ vortessence_user }}"
 
+- name: Install Django<2.0
+  pip:
+    name: django
+    version: 1.11.8
+    state: present
+
 - name: Install Vortessence requirements
   pip: name={{item}} state=present
   with_items:
-    - django
     - tabulate
     - django-extra-views
     - pycrypto
