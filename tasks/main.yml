@@ -19,5 +19,6 @@
   service: "name={{ supervisor_svc }} state=started enabled=yes"
 
 - include: ramdisk.yml
+- include: pip-upgrade.yml
 - include: vortessence.yml
 
