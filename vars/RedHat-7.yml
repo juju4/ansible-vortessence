@@ -6,4 +6,3 @@ mysql_confdir: /etc/my.cnf.d
 supervisor_svc: supervisord
 supervisor_confdir: /etc/supervisord.d
 supervisor_ext: ini
-

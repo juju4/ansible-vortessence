@@ -2,4 +2,3 @@
 
 - name: restart supervisor
   service: name={{ supervisor_svc }} state=restarted sleep=5
-

@@ -25,13 +25,14 @@
     state: present
 
 - name: Install Vortessence requirements
-  pip: name={{item}} state=present
-  with_items:
-    - tabulate
-    - django-extra-views
-    - pycrypto
-    - django-pure-pagination
-    - distorm3
+  pip:
+    name:
+      - tabulate
+      - django-extra-views
+      - pycrypto
+      - django-pure-pagination
+      - distorm3
+    state: present
   become: yes
 
 - name: create vortessence mysql db
@@ -114,4 +115,3 @@
   register: wui
   ignore_errors: true
 - debug: var=wui.stdout_lines
-

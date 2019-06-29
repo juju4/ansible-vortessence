@@ -22,4 +22,3 @@ vortessence_server_port: 8000
 ramdisk_path: /media/tmpfs
 ramdisk_size: 1024m
 #ramdisk_size: 2048m
-

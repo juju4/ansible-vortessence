@@ -1,14 +1,17 @@
 ---
 
 - name: Redhat | Install vortessence dependencies
-  yum: name={{item}} state=present update_cache=yes
-  with_items:
-    - git
-    - mariadb
-    - mariadb-server
-    - MySQL-python
-    - python-pip
-    - python-devel
-    - supervisor
-    - gcc
-
+  yum:
+    name:
+      - git
+      - mariadb
+      - mariadb-server
+      - MySQL-python
+      - python-pip
+      - python-devel
+      - supervisor
+      - gcc
+    state: present
+    update_cache: yes
+    register: pkg_result
+    until: pkg_result is success

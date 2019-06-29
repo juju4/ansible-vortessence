@@ -1,12 +1,16 @@
 ---
 
 - name: apt | vortessence dependencies install
-  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600
-  with_items:
-    - git
-    - mysql-server
-    - python-mysqldb
-    - python-pip
-    - python-dev
-    - supervisor
-
+  apt:
+    name:
+      - git
+      - mysql-server
+      - python-mysqldb
+      - python-pip
+      - python-dev
+      - supervisor
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+    register: pkg_result
+    until: pkg_result is success
